@@ -25,26 +25,23 @@ GET /feed
 ### Examples
 
 ```bash
-BASE="https://rss-filter.lichcode.workers.dev/feed"
-FEED="https://hnrss.org/newest"
-
 # include: match any of the comma-separated keywords (default match=any)
-curl "$BASE?url=$FEED&include=typescript,rust"
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=typescript,rust"
 
 # match=all: item must contain every keyword
-curl "$BASE?url=$FEED&include=node,performance&match=all"
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=node,performance&match=all"
 
 # exclude: drop items matching any of these keywords
-curl "$BASE?url=$FEED&include=AI&exclude=sponsored,ad"
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=AI&exclude=sponsored,ad"
 
 # fields: restrict keyword search to title only (default: title,description,content)
-curl "$BASE?url=$FEED&include=rust&fields=title"
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=rust&fields=title"
 
 # format=rss: return RSS XML instead of JSON
-curl "$BASE?url=$FEED&include=typescript&format=rss"
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=typescript&format=rss"
 
 # case_sensitive=true: keyword casing must match exactly
-curl "$BASE?url=$FEED&include=TypeScript&case_sensitive=true"
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=TypeScript&case_sensitive=true"
 ```
 
 ## Deployment
