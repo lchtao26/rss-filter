@@ -239,15 +239,7 @@
   <h1>RSS Filter URL Builder</h1>
   <p class="subtitle">Build your filtered RSS feed URL</p>
 
-  <div class="section">
-    <div class="section-title">API Configuration</div>
-    <div class="form-group">
-      <label for="baseUrl">Base URL</label>
-      <input type="text" id="baseUrl" value="https://rss-filter.lichcode.workers.dev/"
-        placeholder="https://your-api.workers.dev">
-      <p class="hint">Your deployed API root URL</p>
-    </div>
-  </div>
+
 
   <div class="section">
     <div class="section-title">Feed</div>
@@ -322,7 +314,7 @@
   </div>
 
   <script>
-    const baseUrlInput = document.getElementById('baseUrl');
+
     const urlInput = document.getElementById('url');
     const includeAnyInput = document.getElementById('include_any');
     const includeAllInput = document.getElementById('include_all');
@@ -334,7 +326,7 @@
     const urlError = document.getElementById('urlError');
 
     function buildUrl() {
-      const baseUrl = baseUrlInput.value.trim() || 'https://rss-filter.lichcode.workers.dev/';
+      const baseUrl = 'https://rss-filter.lichcode.workers.dev/';
       const url = urlInput.value.trim();
 
       // URL is required - don't build if empty
@@ -406,7 +398,7 @@
 
     // Add event listeners to all inputs
     const inputs = [
-      baseUrlInput, urlInput, includeAnyInput, includeAllInput, excludeAnyInput, excludeAllInput, caseSensitiveInput
+      urlInput, includeAnyInput, includeAllInput, excludeAnyInput, excludeAllInput, caseSensitiveInput
     ];
 
     inputs.forEach(input => {
