@@ -30,6 +30,26 @@ pnpm build
 pnpm start
 ```
 
+## Cloudflare Worker Deployment
+
+Deploy to Cloudflare Workers:
+
+```bash
+# Deploy to Cloudflare Workers
+pnpm wrangler deploy
+
+# Or use npm/npx
+npx wrangler deploy
+```
+
+After deployment, your API will be available at `https://rss-filter.<your-account>.workers.dev/feed`
+
+### Worker Configuration
+
+The Worker is configured in [wrangler.toml](wrangler.toml):
+- **Main entry:** `src/worker.ts`
+- **Compatibility date:** 2025-01-01
+
 ## API Usage
 
 ### Endpoint
