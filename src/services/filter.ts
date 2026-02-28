@@ -1,4 +1,4 @@
-import type { FeedItem, SearchField } from '../types.js';
+import type { SearchField } from '../types.js';
 
 export interface FilterOptions {
   include?: string;
@@ -13,18 +13,33 @@ function parseFields(fields: string | undefined): SearchField[] {
   return fields.split(',') as SearchField[];
 }
 
-function getFieldValue(item: FeedItem, field: SearchField): string {
+// feedsmith item type - content can be a string or { encoded: string }
+type FeedsmithItem = {
+  title?: string;
+  link?: string;
+  description?: string;
+  content?: string | { encoded?: string };
+  pubDate?: string;
+};
+
+function getFieldValue(item: FeedsmithItem, field: SearchField): string {
   switch (field) {
     case 'title':
       return item.title || '';
     case 'description':
-      return item.description || item.contentSnippet || '';
+      return item.description || '';
     case 'content':
-      return item.content || item.contentSnippet || '';
+      if (typeof item.content === 'string') {
+        return item.content;
+      }
+      if (item.content && typeof item.content === 'object') {
+        return item.content.encoded || '';
+      }
+      return '';
   }
 }
 
-function itemContainsKeyword(item: FeedItem, keyword: string, fields: SearchField[], caseSensitive: boolean): boolean {
+function itemContainsKeyword(item: FeedsmithItem, keyword: string, fields: SearchField[], caseSensitive: boolean): boolean {
   const searchText = caseSensitive ? keyword : keyword.toLowerCase();
 
   for (const field of fields) {
@@ -36,7 +51,7 @@ function itemContainsKeyword(item: FeedItem, keyword: string, fields: SearchFiel
   return false;
 }
 
-export function filterFeedItems(items: FeedItem[], options: FilterOptions): FeedItem[] {
+export function filterFeedItems(items: FeedsmithItem[], options: FilterOptions): FeedsmithItem[] {
   const { include, exclude, match = 'any', fields: fieldsParam, case_sensitive = false } = options;
   const fields = fieldsParam || ['title', 'description', 'content'];
 

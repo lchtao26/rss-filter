@@ -13,9 +13,15 @@ vi.mock('../services/filter', () => ({
   filterFeedItems: vi.fn(),
 }));
 
-const mockItems = [
-  { title: 'Test Item', link: 'http://example.com/1', description: 'Test description' },
-];
+const mockFeedsmithResponse = {
+  format: 'rss' as const,
+  feed: {
+    title: 'Test Feed',
+    items: [
+      { title: 'Test Item', link: 'http://example.com/1', description: 'Test description' },
+    ],
+  },
+};
 
 describe('feedRoute', () => {
   beforeEach(() => {
@@ -23,21 +29,21 @@ describe('feedRoute', () => {
   });
 
   it('should return filtered items as JSON', async () => {
-    vi.mocked(fetchFeed).mockResolvedValue(mockItems);
-    vi.mocked(filterFeedItems).mockReturnValue(mockItems);
+    vi.mocked(fetchFeed).mockResolvedValue(mockFeedsmithResponse);
+    vi.mocked(filterFeedItems).mockReturnValue(mockFeedsmithResponse.feed.items);
 
     const app = new Hono().route('/feed', feedRoute);
     const res = await app.request('/feed?url=http://example.com/rss&format=json&include=test');
 
     expect(res.status).toBe(200);
     const data = await res.json();
-    expect(data.items).toBeDefined();
+    expect(data.feed).toBeDefined();
     expect(fetchFeed).toHaveBeenCalledWith('http://example.com/rss');
   });
 
   it('should return filtered items as RSS XML', async () => {
-    vi.mocked(fetchFeed).mockResolvedValue(mockItems);
-    vi.mocked(filterFeedItems).mockReturnValue(mockItems);
+    vi.mocked(fetchFeed).mockResolvedValue(mockFeedsmithResponse);
+    vi.mocked(filterFeedItems).mockReturnValue(mockFeedsmithResponse.feed.items);
 
     const app = new Hono().route('/feed', feedRoute);
     const res = await app.request('/feed?url=http://example.com/rss&format=rss&include=test');
@@ -49,13 +55,13 @@ describe('feedRoute', () => {
   });
 
   it('should pass filter params to filterFeedItems', async () => {
-    vi.mocked(fetchFeed).mockResolvedValue(mockItems);
+    vi.mocked(fetchFeed).mockResolvedValue(mockFeedsmithResponse);
     vi.mocked(filterFeedItems).mockReturnValue([]);
 
     const app = new Hono().route('/feed', feedRoute);
     await app.request('/feed?url=http://example.com/rss&include=typescript,rust&match=all&exclude=sponsored');
 
-    expect(filterFeedItems).toHaveBeenCalledWith(mockItems, {
+    expect(filterFeedItems).toHaveBeenCalledWith(mockFeedsmithResponse.feed.items, {
       include: 'typescript,rust',
       match: 'all',
       exclude: 'sponsored',
@@ -74,19 +80,19 @@ describe('feedRoute', () => {
   });
 
   it('should parse fields parameter correctly', async () => {
-    vi.mocked(fetchFeed).mockResolvedValue(mockItems);
-    vi.mocked(filterFeedItems).mockReturnValue(mockItems);
+    vi.mocked(fetchFeed).mockResolvedValue(mockFeedsmithResponse);
+    vi.mocked(filterFeedItems).mockReturnValue(mockFeedsmithResponse.feed.items);
 
     const app = new Hono().route('/feed', feedRoute);
     await app.request('/feed?url=http://example.com/rss&fields=title,description&include=test');
 
-    expect(filterFeedItems).toHaveBeenCalledWith(mockItems, expect.objectContaining({
+    expect(filterFeedItems).toHaveBeenCalledWith(mockFeedsmithResponse.feed.items, expect.objectContaining({
       fields: ['title', 'description'],
     }));
   });
 
   it('should return 400 for invalid url format', async () => {
-    vi.mocked(fetchFeed).mockResolvedValue(mockItems);
+    vi.mocked(fetchFeed).mockResolvedValue(mockFeedsmithResponse);
 
     const app = new Hono().route('/feed', feedRoute);
     const res = await app.request('/feed?url=not-a-url');

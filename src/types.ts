@@ -1,20 +1,9 @@
 export interface FeedItem {
-  title: string;
-  link: string;
-  pubDate?: string;
-  content?: string;
-  contentSnippet?: string;
+  title?: string;
+  link?: string;
   description?: string;
-}
-
-export interface FilterParams {
-  url: string;
-  include?: string;
-  exclude?: string;
-  match?: 'any' | 'all';
-  fields?: 'title' | 'description' | 'content' | 'title,description' | 'title,content' | 'description,content' | 'title,description,content';
-  case_sensitive?: boolean;
-  format?: 'rss' | 'json';
+  content?: string; // maps to content:encoded in RSS
+  pubDate?: string;
 }
 
 export type SearchField = 'title' | 'description' | 'content';

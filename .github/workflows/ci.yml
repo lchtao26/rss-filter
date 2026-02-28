@@ -38,3 +38,9 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Deploy Worker
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: pnpm worker:deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
