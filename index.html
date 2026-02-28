@@ -241,7 +241,7 @@
     <div class="section-title">API Configuration</div>
     <div class="form-group">
       <label for="baseUrl">Base URL</label>
-      <input type="text" id="baseUrl" value="http://localhost:3015" placeholder="https://your-api.workers.dev">
+      <input type="text" id="baseUrl" value="https://rss-filter.lichcode.workers.dev/" placeholder="https://your-api.workers.dev">
       <p class="hint">Your deployed API root URL</p>
     </div>
   </div>
@@ -346,7 +346,7 @@
     const urlError = document.getElementById('urlError');
 
     function buildUrl() {
-      const baseUrl = baseUrlInput.value.trim() || 'http://localhost:3015';
+      const baseUrl = baseUrlInput.value.trim() || 'https://rss-filter.lichcode.workers.dev/';
       const url = urlInput.value.trim();
 
       // URL is required - don't build if empty
