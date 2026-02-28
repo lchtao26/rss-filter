@@ -1,67 +1,21 @@
 # RSS Filter API
 
-A Node.js + Hono REST API that proxies and filters RSS/Atom feeds by keywords, with flexible include/exclude/AND/OR logic.
+A REST API that proxies and filters RSS/Atom feeds by keywords, with flexible include/exclude and AND/OR logic.
 
-## Stack
-
-- **Runtime:** Node.js
-- **Framework:** Hono (TypeScript-first, fast)
-- **RSS Parsing:** feedsmith (handles RSS 2.0 + Atom + JSON Feed)
-- **Testing:** Vitest
-
-## Installation
-
-```bash
-pnpm install
-```
-
-## Development
-
-```bash
-pnpm dev
-```
-
-Server runs on http://localhost:3015
-
-## Build
-
-```bash
-pnpm build
-pnpm start
-```
-
-## Cloudflare Worker Deployment
-
-Deploy to Cloudflare Workers:
-
-```bash
-# Deploy to Cloudflare Workers
-pnpm wrangler deploy
-
-# Or use npm/npx
-npx wrangler deploy
-```
-
-After deployment, your API will be available at `https://rss-filter.<your-account>.workers.dev/feed`
-
-### Worker Configuration
-
-The Worker is configured in [wrangler.toml](wrangler.toml):
-- **Main entry:** `src/worker.ts`
-- **Compatibility date:** 2025-01-01
-
-## API Usage
+## Usage
 
 ### Endpoint
 
-`GET /feed`
+```
+GET /feed
+```
 
 ### Query Parameters
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `url` | Yes | Remote RSS/Atom feed URL |
-| `include` | No | Comma-separated keywords; item must match at least one |
+| `url` | Yes | Remote RSS/Atom feed URL to proxy and filter |
+| `include` | No | Comma-separated keywords; items must match at least one |
 | `exclude` | No | Comma-separated keywords; items matching any are removed |
 | `match` | No | `any` (OR, default) or `all` (AND) for `include` terms |
 | `fields` | No | Fields to search: `title`, `description`, `content` (default: all three) |
@@ -72,27 +26,48 @@ The Worker is configured in [wrangler.toml](wrangler.toml):
 
 ```bash
 # Filter for TypeScript or Rust articles (OR logic)
-curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=typescript,rust&match=any"
+curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=typescript,rust&match=any"
 
-# Filter for articles containing both "node" AND "bun" (AND logic)
-curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=node,bun&match=all"
+# Require both "node" AND "bun" in the same article (AND logic)
+curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=node,bun&match=all"
 
-# Exclude sponsored content
-curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=AI&exclude=sponsored"
+# Include AI articles, but exclude sponsored ones
+curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=AI&exclude=sponsored"
 
-# Search only in title
-curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=rust&fields=title"
+# Search only in the title field
+curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=rust&fields=title"
 
-# Get RSS XML output
-curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=typescript&format=rss"
+# Return filtered results as RSS XML
+curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=typescript&format=rss"
 
-# Case sensitive search
-curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=TypeScript&case_sensitive=true"
+# Case-sensitive keyword matching
+curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=TypeScript&case_sensitive=true"
 ```
 
-## Testing
+## Deployment
+
+### Cloudflare Workers
 
 ```bash
-pnpm test
+pnpm wrangler deploy
 ```
 
+Your API will be available at `https://rss-filter.<your-account>.workers.dev/feed`.
+
+The Worker is configured in `wrangler.toml` with entry point `src/worker.ts`.
+
+## Development
+
+```bash
+pnpm install
+pnpm dev        # runs on http://localhost:3015
+pnpm test
+pnpm build && pnpm start
+```
+
+## Stack
+
+- **Runtime:** Node.js
+- **Framework:** Hono (TypeScript-first)
+- **RSS Parsing:** feedsmith (RSS 2.0, Atom, JSON Feed)
+- **Testing:** Vitest
