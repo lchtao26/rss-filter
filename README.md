@@ -25,23 +25,26 @@ GET /feed
 ### Examples
 
 ```bash
-# Filter for TypeScript or Rust articles (OR logic)
-curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=typescript,rust&match=any"
+BASE="https://rss-filter.lichcode.workers.dev/feed"
+FEED="https://hnrss.org/newest"
 
-# Require both "node" AND "bun" in the same article (AND logic)
-curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=node,bun&match=all"
+# include: match any of the comma-separated keywords (default match=any)
+curl "$BASE?url=$FEED&include=typescript,rust"
 
-# Include AI articles, but exclude sponsored ones
-curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=AI&exclude=sponsored"
+# match=all: item must contain every keyword
+curl "$BASE?url=$FEED&include=node,performance&match=all"
 
-# Search only in the title field
-curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=rust&fields=title"
+# exclude: drop items matching any of these keywords
+curl "$BASE?url=$FEED&include=AI&exclude=sponsored,ad"
 
-# Return filtered results as RSS XML
-curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=typescript&format=rss"
+# fields: restrict keyword search to title only (default: title,description,content)
+curl "$BASE?url=$FEED&include=rust&fields=title"
 
-# Case-sensitive keyword matching
-curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/newest&include=TypeScript&case_sensitive=true"
+# format=rss: return RSS XML instead of JSON
+curl "$BASE?url=$FEED&include=typescript&format=rss"
+
+# case_sensitive=true: keyword casing must match exactly
+curl "$BASE?url=$FEED&include=TypeScript&case_sensitive=true"
 ```
 
 ## Deployment
@@ -52,7 +55,7 @@ curl "https://rss-filter.<your-account>.workers.dev/feed?url=https://hnrss.org/n
 pnpm wrangler deploy
 ```
 
-Your API will be available at `https://rss-filter.<your-account>.workers.dev/feed`.
+Your API will be available at `https://rss-filter.<your-account>.workers.dev/feed`. Live instance: https://rss-filter.lichcode.workers.dev/feed
 
 The Worker is configured in `wrangler.toml` with entry point `src/worker.ts`.
 
