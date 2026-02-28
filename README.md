@@ -6,7 +6,7 @@ A Node.js + Hono REST API that proxies and filters RSS/Atom feeds by keywords, w
 
 - **Runtime:** Node.js
 - **Framework:** Hono (TypeScript-first, fast)
-- **RSS Parsing:** rss-parser (handles RSS 2.0 + Atom)
+- **RSS Parsing:** feedsmith (handles RSS 2.0 + Atom + JSON Feed)
 - **Testing:** Vitest
 
 ## Installation
