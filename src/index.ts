@@ -8,7 +8,7 @@ app.get('/', (c) => {
   return c.json({
     message: 'RSS Filter API',
     endpoints: {
-      feed: 'GET /feed?url=<rss-url>&include=keyword1,keyword2&exclude=keyword3&match=any|all&fields=title,description,content&case_sensitive=true|false&format=rss|json',
+      feed: 'GET /feed?url=<rss-url>&include=keyword1,keyword2&exclude=keyword3&match=any|all&fields=title,description,content&case_sensitive=true|false',
     },
   });
 });

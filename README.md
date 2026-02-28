@@ -1,6 +1,6 @@
 # RSS Filter API
 
-A REST API that proxies and filters RSS/Atom feeds by keywords, with flexible include/exclude and AND/OR logic.
+A REST API that filters RSS/Atom feeds by keywords, with flexible include/exclude and AND/OR logic.
 
 ## Usage
 
@@ -20,7 +20,6 @@ GET /feed
 | `match` | No | `any` (OR, default) or `all` (AND) for `include` terms |
 | `fields` | No | Fields to search: `title`, `description`, `content` (default: all three) |
 | `case_sensitive` | No | `true` or `false` (default: `false`) |
-| `format` | No | `json` (default) or `rss` |
 
 ### Examples
 
@@ -36,9 +35,6 @@ curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&
 
 # fields: restrict keyword search to title only (default: title,description,content)
 curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=rust&fields=title"
-
-# format=rss: return RSS XML instead of JSON
-curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=typescript&format=rss"
 
 # case_sensitive=true: keyword casing must match exactly
 curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=TypeScript&case_sensitive=true"
