@@ -28,25 +28,12 @@ describe('feedRoute', () => {
     vi.clearAllMocks();
   });
 
-  it('should return filtered items as JSON', async () => {
+  it('should return filtered items as RSS XML by default', async () => {
     vi.mocked(fetchFeed).mockResolvedValue(mockFeedsmithResponse);
     vi.mocked(filterFeedItems).mockReturnValue(mockFeedsmithResponse.feed.items);
 
     const app = new Hono().route('/feed', feedRoute);
-    const res = await app.request('/feed?url=http://example.com/rss&format=json&include=test');
-
-    expect(res.status).toBe(200);
-    const data = await res.json() as { feed?: unknown };
-    expect(data.feed).toBeDefined();
-    expect(fetchFeed).toHaveBeenCalledWith('http://example.com/rss');
-  });
-
-  it('should return filtered items as RSS XML', async () => {
-    vi.mocked(fetchFeed).mockResolvedValue(mockFeedsmithResponse);
-    vi.mocked(filterFeedItems).mockReturnValue(mockFeedsmithResponse.feed.items);
-
-    const app = new Hono().route('/feed', feedRoute);
-    const res = await app.request('/feed?url=http://example.com/rss&format=rss&include=test');
+    const res = await app.request('/feed?url=http://example.com/rss&include=test');
 
     expect(res.status).toBe(200);
     const text = await res.text();

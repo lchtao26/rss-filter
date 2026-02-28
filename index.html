@@ -311,20 +311,6 @@
         <span class="toggle-label">Case Sensitive</span>
       </div>
     </div>
-
-    <div class="form-group">
-      <label>Output Format</label>
-      <div class="radio-group">
-        <label class="radio-item">
-          <input type="radio" name="format" value="json" checked>
-          <span>JSON</span>
-        </label>
-        <label class="radio-item">
-          <input type="radio" name="format" value="rss">
-          <span>RSS</span>
-        </label>
-      </div>
-    </div>
   </div>
 
   <div class="output-section">
@@ -405,12 +391,6 @@
         params.set('case_sensitive', 'true');
       }
 
-      // Format (default: json)
-      const format = document.querySelector('input[name="format"]:checked').value;
-      if (format !== 'json') {
-        params.set('format', format);
-      }
-
       // Build final URL
       const feedUrl = `${baseUrl.replace(/\/$/, '')}/feed?${params.toString()}`;
       outputUrl.textContent = feedUrl;
@@ -426,7 +406,7 @@
     });
 
     // Radio buttons and checkboxes
-    document.querySelectorAll('input[name="match"], input[name="format"]').forEach(el => {
+    document.querySelectorAll('input[name="match"]').forEach(el => {
       el.addEventListener('change', buildUrl);
     });
 

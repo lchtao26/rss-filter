@@ -100,7 +100,6 @@ export const feedRoute = new Hono().get('/', async (c) => {
   const match = (c.req.query('match') as 'any' | 'all') || 'any';
   const fields = c.req.query('fields');
   const case_sensitive = c.req.query('case_sensitive') === 'true';
-  const format = (c.req.query('format') as 'rss' | 'json') || 'json';
 
   // Validate URL
   if (!url) {
@@ -129,12 +128,7 @@ export const feedRoute = new Hono().get('/', async (c) => {
   const rawItems = feedResult.type === 'atom' ? [] : (feedResult.feed.items ?? []);
   const filteredItems = filterFeedItems(rawItems, filterOptions);
 
-  // Return response based on format
-  if (format === 'json') {
-    return c.json({ feed: { ...feedResult.feed, items: filteredItems } });
-  }
-
-  // RSS XML format - use custom generator to preserve original feed metadata
+  // Always return RSS XML format
   const rss = generateRss({ ...feedResult.feed, items: filteredItems });
   return c.text(rss, 200, {
     'Content-Type': 'application/rss+xml; charset=utf-8',
