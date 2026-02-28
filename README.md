@@ -15,29 +15,30 @@ GET /feed
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `url` | Yes | Remote RSS/Atom feed URL to proxy and filter |
-| `include` | No | Comma-separated keywords; items must match at least one |
-| `exclude` | No | Comma-separated keywords; items matching any are removed |
-| `match` | No | `any` (OR, default) or `all` (AND) for `include` terms |
+| `include_any` | No | Comma-separated keywords; items matching any are included |
+| `include_all` | No | Comma-separated keywords; items must match all to be included |
+| `exclude_any` | No | Comma-separated keywords; items matching any are removed |
+| `exclude_all` | No | Comma-separated keywords; items must match all to be removed |
 | `fields` | No | Fields to search: `title`, `description`, `content` (default: all three) |
 | `case_sensitive` | No | `true` or `false` (default: `false`) |
 
 ### Examples
 
 ```bash
-# include: match any of the comma-separated keywords (default match=any)
-curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=typescript,rust"
+# include_any: match any of the comma-separated keywords
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include_any=typescript,rust"
 
-# match=all: item must contain every keyword
-curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=node,performance&match=all"
+# include_all: item must contain every keyword
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include_all=node,performance"
 
-# exclude: drop items matching any of these keywords
-curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=AI&exclude=sponsored,ad"
+# exclude_any: drop items matching any of these keywords
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include_any=AI&exclude_any=sponsored,ad"
 
 # fields: restrict keyword search to title only (default: title,description,content)
-curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=rust&fields=title"
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include_any=rust&fields=title"
 
 # case_sensitive=true: keyword casing must match exactly
-curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include=TypeScript&case_sensitive=true"
+curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&include_any=TypeScript&case_sensitive=true"
 ```
 
 ## Deployment

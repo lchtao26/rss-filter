@@ -5,9 +5,10 @@ import { parseFeed, generateRssFeed, generateAtomFeed, generateJsonFeed } from '
 
 const querySchema = z.object({
   url: z.string().url(),
-  include: z.string().optional(),
-  exclude: z.string().optional(),
-  match: z.enum(['any', 'all']).optional().default('any'),
+  include_all: z.string().optional(),
+  include_any: z.string().optional(),
+  exclude_all: z.string().optional(),
+  exclude_any: z.string().optional(),
   fields: z.string().optional().default('title,description,content'),
   case_sensitive: z.enum(['true', 'false']).optional().default('false').transform(v => v === 'true'),
 });
@@ -46,8 +47,10 @@ export const feedRoute = new Hono().get(
       else if (originalFormat === 'json' && feedData.items) items = feedData.items;
       else if (originalFormat === 'rdf' && feedData.items) items = feedData.items;
 
-      const includeKeywords = query.include ? query.include.split(',').filter(Boolean) : [];
-      const excludeKeywords = query.exclude ? query.exclude.split(',').filter(Boolean) : [];
+      const includeAllKeywords = query.include_all ? query.include_all.split(',').filter(Boolean) : [];
+      const includeAnyKeywords = query.include_any ? query.include_any.split(',').filter(Boolean) : [];
+      const excludeAllKeywords = query.exclude_all ? query.exclude_all.split(',').filter(Boolean) : [];
+      const excludeAnyKeywords = query.exclude_any ? query.exclude_any.split(',').filter(Boolean) : [];
       const fields = query.fields.split(',').filter(Boolean);
 
       const filterItems = (item: any) => {
@@ -70,30 +73,40 @@ export const feedRoute = new Hono().get(
 
         let targetText = query.case_sensitive ? searchableText : searchableText.toLowerCase();
 
-        // Exclude check
-        if (excludeKeywords.length > 0) {
-          const hasExclude = excludeKeywords.some(kw => {
+        // Exclude ANY check
+        if (excludeAnyKeywords.length > 0) {
+          const hasExcludeAny = excludeAnyKeywords.some(kw => {
             const tk = query.case_sensitive ? kw : kw.toLowerCase();
             return targetText.includes(tk);
           });
-          if (hasExclude) return false;
+          if (hasExcludeAny) return false;
         }
 
-        // Include check
-        if (includeKeywords.length > 0) {
-          if (query.match === 'all') {
-            const hasAll = includeKeywords.every(kw => {
-              const tk = query.case_sensitive ? kw : kw.toLowerCase();
-              return targetText.includes(tk);
-            });
-            if (!hasAll) return false;
-          } else {
-            const hasAny = includeKeywords.some(kw => {
-              const tk = query.case_sensitive ? kw : kw.toLowerCase();
-              return targetText.includes(tk);
-            });
-            if (!hasAny) return false;
-          }
+        // Exclude ALL check
+        if (excludeAllKeywords.length > 0) {
+          const hasExcludeAll = excludeAllKeywords.every(kw => {
+            const tk = query.case_sensitive ? kw : kw.toLowerCase();
+            return targetText.includes(tk);
+          });
+          if (hasExcludeAll) return false;
+        }
+
+        // Include ALL check
+        if (includeAllKeywords.length > 0) {
+          const hasIncludeAll = includeAllKeywords.every(kw => {
+            const tk = query.case_sensitive ? kw : kw.toLowerCase();
+            return targetText.includes(tk);
+          });
+          if (!hasIncludeAll) return false;
+        }
+
+        // Include ANY check
+        if (includeAnyKeywords.length > 0) {
+          const hasIncludeAny = includeAnyKeywords.some(kw => {
+            const tk = query.case_sensitive ? kw : kw.toLowerCase();
+            return targetText.includes(tk);
+          });
+          if (!hasIncludeAny) return false;
         }
 
         return true;

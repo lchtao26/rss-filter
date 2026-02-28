@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -208,11 +209,11 @@
       border-radius: 50%;
     }
 
-    .toggle input:checked + .toggle-slider {
+    .toggle input:checked+.toggle-slider {
       background-color: #0066cc;
     }
 
-    .toggle input:checked + .toggle-slider:before {
+    .toggle input:checked+.toggle-slider:before {
       transform: translateX(20px);
     }
 
@@ -233,6 +234,7 @@
     }
   </style>
 </head>
+
 <body>
   <h1>RSS Filter URL Builder</h1>
   <p class="subtitle">Build your filtered RSS feed URL</p>
@@ -241,7 +243,8 @@
     <div class="section-title">API Configuration</div>
     <div class="form-group">
       <label for="baseUrl">Base URL</label>
-      <input type="text" id="baseUrl" value="https://rss-filter.lichcode.workers.dev/" placeholder="https://your-api.workers.dev">
+      <input type="text" id="baseUrl" value="https://rss-filter.lichcode.workers.dev/"
+        placeholder="https://your-api.workers.dev">
       <p class="hint">Your deployed API root URL</p>
     </div>
   </div>
@@ -258,30 +261,27 @@
   <div class="section">
     <div class="section-title">Filters</div>
     <div class="form-group">
-      <label for="include">Include Keywords</label>
-      <input type="text" id="include" placeholder="keyword1, keyword2">
+      <label for="include_any">Include Any (OR)</label>
+      <input type="text" id="include_any" placeholder="keyword1, keyword2">
       <p class="hint">Comma-separated. Items matching ANY of these will be included.</p>
     </div>
 
     <div class="form-group">
-      <label for="exclude">Exclude Keywords</label>
-      <input type="text" id="exclude" placeholder="keyword1, keyword2">
+      <label for="include_all">Include All (AND)</label>
+      <input type="text" id="include_all" placeholder="keyword1, keyword2">
+      <p class="hint">Comma-separated. Items must match ALL of these to be included.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="exclude_any">Exclude Any (OR)</label>
+      <input type="text" id="exclude_any" placeholder="keyword1, keyword2">
       <p class="hint">Comma-separated. Items matching ANY of these will be excluded.</p>
     </div>
 
     <div class="form-group">
-      <label>Match Mode</label>
-      <div class="radio-group">
-        <label class="radio-item">
-          <input type="radio" name="match" value="any" checked>
-          <span>Any</span>
-        </label>
-        <label class="radio-item">
-          <input type="radio" name="match" value="all">
-          <span>All</span>
-        </label>
-      </div>
-      <p class="hint">Match "any" or "all" include keywords</p>
+      <label for="exclude_all">Exclude All (AND)</label>
+      <input type="text" id="exclude_all" placeholder="keyword1, keyword2">
+      <p class="hint">Comma-separated. Items matching ALL of these will be excluded.</p>
     </div>
 
     <div class="form-group">
@@ -324,8 +324,10 @@
   <script>
     const baseUrlInput = document.getElementById('baseUrl');
     const urlInput = document.getElementById('url');
-    const includeInput = document.getElementById('include');
-    const excludeInput = document.getElementById('exclude');
+    const includeAnyInput = document.getElementById('include_any');
+    const includeAllInput = document.getElementById('include_all');
+    const excludeAnyInput = document.getElementById('exclude_any');
+    const excludeAllInput = document.getElementById('exclude_all');
     const caseSensitiveInput = document.getElementById('caseSensitive');
     const outputUrl = document.getElementById('outputUrl');
     const copyBtn = document.getElementById('copyBtn');
@@ -357,22 +359,28 @@
       // Add URL (required)
       params.set('url', url);
 
-      // Include keywords
-      const include = includeInput.value.trim();
-      if (include) {
-        params.set('include', include);
+      // Include Any keywords
+      const includeAny = includeAnyInput.value.trim();
+      if (includeAny) {
+        params.set('include_any', includeAny);
       }
 
-      // Exclude keywords
-      const exclude = excludeInput.value.trim();
-      if (exclude) {
-        params.set('exclude', exclude);
+      // Include All keywords
+      const includeAll = includeAllInput.value.trim();
+      if (includeAll) {
+        params.set('include_all', includeAll);
       }
 
-      // Match mode (default: any)
-      const match = document.querySelector('input[name="match"]:checked').value;
-      if (match !== 'any') {
-        params.set('match', match);
+      // Exclude Any keywords
+      const excludeAny = excludeAnyInput.value.trim();
+      if (excludeAny) {
+        params.set('exclude_any', excludeAny);
+      }
+
+      // Exclude All keywords
+      const excludeAll = excludeAllInput.value.trim();
+      if (excludeAll) {
+        params.set('exclude_all', excludeAll);
       }
 
       // Fields (default: title,description,content - all checked)
@@ -398,18 +406,14 @@
 
     // Add event listeners to all inputs
     const inputs = [
-      baseUrlInput, urlInput, includeInput, excludeInput, caseSensitiveInput
+      baseUrlInput, urlInput, includeAnyInput, includeAllInput, excludeAnyInput, excludeAllInput, caseSensitiveInput
     ];
 
     inputs.forEach(input => {
       input.addEventListener('input', buildUrl);
     });
 
-    // Radio buttons and checkboxes
-    document.querySelectorAll('input[name="match"]').forEach(el => {
-      el.addEventListener('change', buildUrl);
-    });
-
+    // Checkboxes
     document.querySelectorAll('input[name="fields"]').forEach(el => {
       el.addEventListener('change', buildUrl);
     });
@@ -442,4 +446,5 @@
     buildUrl();
   </script>
 </body>
+
 </html>

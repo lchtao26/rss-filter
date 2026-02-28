@@ -59,8 +59,8 @@ describe('GET /feed route', () => {
     expect(text).toContain('Typescript and Rust');
   });
 
-  it('filters with include and match=any', async () => {
-    const res = await app.request('/feed?url=https://example.com/feed.xml&include=typescript');
+  it('filters with include_any', async () => {
+    const res = await app.request('/feed?url=https://example.com/feed.xml&include_any=typescript');
     expect(res.status).toBe(200);
     const text = await res.text();
     expect(text).toContain('Hello Typescript');
@@ -70,21 +70,21 @@ describe('GET /feed route', () => {
 
   it('filters with case sensitivity', async () => {
     // case_sensitive=true and 'typescript' should NOT match 'Typescript'
-    const res = await app.request('/feed?url=https://example.com/feed.xml&include=typescript&case_sensitive=true');
+    const res = await app.request('/feed?url=https://example.com/feed.xml&include_any=typescript&case_sensitive=true');
     expect(res.status).toBe(200);
     const text = await res.text();
     expect(text).not.toContain('<title>Hello Typescript</title>');
     expect(text).not.toContain('<title>Typescript and Rust</title>');
 
-    const res2 = await app.request('/feed?url=https://example.com/feed.xml&include=Typescript&case_sensitive=true');
+    const res2 = await app.request('/feed?url=https://example.com/feed.xml&include_any=Typescript&case_sensitive=true');
     expect(res2.status).toBe(200);
     const text2 = await res2.text();
     expect(text2).toContain('Hello Typescript');
     expect(text2).toContain('Typescript and Rust');
   });
 
-  it('filters with include and match=all', async () => {
-    const res = await app.request('/feed?url=https://example.com/feed.xml&include=typescript,rust&match=all');
+  it('filters with include_all', async () => {
+    const res = await app.request('/feed?url=https://example.com/feed.xml&include_all=typescript,rust');
     expect(res.status).toBe(200);
     const text = await res.text();
     expect(text).not.toContain('<title>Hello Typescript</title>');
@@ -92,11 +92,20 @@ describe('GET /feed route', () => {
     expect(text).toContain('Typescript and Rust');
   });
 
-  it('filters with exclude', async () => {
-    const res = await app.request('/feed?url=https://example.com/feed.xml&include=typescript&exclude=ad');
+  it('filters with exclude_any', async () => {
+    const res = await app.request('/feed?url=https://example.com/feed.xml&include_any=typescript&exclude_any=ad');
     expect(res.status).toBe(200);
     const text = await res.text();
     expect(text).toContain('Hello Typescript');
+    expect(text).not.toContain('Typescript and Rust');
+  });
+
+  it('filters with exclude_all', async () => {
+    const res = await app.request('/feed?url=https://example.com/feed.xml&exclude_all=great,languages');
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(text).toContain('Hello Typescript');
+    expect(text).toContain('Learning Rust');
     expect(text).not.toContain('Typescript and Rust');
   });
 });
