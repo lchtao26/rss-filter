@@ -104,7 +104,7 @@ flowchart LR
 
 ## Key Files
 
-- `[src/index.ts](src/index.ts)` - creates Hono app, mounts routes, starts `@hono/node-server` on port 5173
+- `[src/index.ts](src/index.ts)` - creates Hono app, mounts routes, starts `@hono/node-server` on port 3015
 - `[src/routes/feed.ts](src/routes/feed.ts)` - validates query params with Hono's `zValidator` + `zod`, calls services
 - `[src/services/fetcher.ts](src/services/fetcher.ts)` - wraps `rss-parser`, returns normalized items
 - `[src/services/filter.ts](src/services/filter.ts)` - pure filtering function, easy to unit test

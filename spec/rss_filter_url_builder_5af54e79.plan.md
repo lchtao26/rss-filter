@@ -31,7 +31,7 @@ All query params from `[src/routes/feed.ts](src/routes/feed.ts)`:
 - The generated URL updates live as the user types (no submit needed)
 - A read-only output box shows the full constructed URL (e.g. `https://your-api.workers.dev/feed?url=...&include=...`)
 - A "Copy" button copies it to clipboard
-- An optional "Base URL" field lets the user set their deployed API root (defaults to `http://localhost:5173`)
+- An optional "Base URL" field lets the user set their deployed API root (defaults to `http://localhost:3015`)
 - Parameters with default values are omitted from the URL unless changed (to keep URLs clean)
 
 ## Output File

@@ -21,7 +21,7 @@ pnpm install
 pnpm dev
 ```
 
-Server runs on http://localhost:5173
+Server runs on http://localhost:3015
 
 ## Build
 
@@ -52,22 +52,22 @@ pnpm start
 
 ```bash
 # Filter for TypeScript or Rust articles (OR logic)
-curl "http://localhost:5173/feed?url=https://hnrss.org/newest&include=typescript,rust&match=any"
+curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=typescript,rust&match=any"
 
 # Filter for articles containing both "node" AND "bun" (AND logic)
-curl "http://localhost:5173/feed?url=https://hnrss.org/newest&include=node,bun&match=all"
+curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=node,bun&match=all"
 
 # Exclude sponsored content
-curl "http://localhost:5173/feed?url=https://hnrss.org/newest&include=AI&exclude=sponsored"
+curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=AI&exclude=sponsored"
 
 # Search only in title
-curl "http://localhost:5173/feed?url=https://hnrss.org/newest&include=rust&fields=title"
+curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=rust&fields=title"
 
 # Get RSS XML output
-curl "http://localhost:5173/feed?url=https://hnrss.org/newest&include=typescript&format=rss"
+curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=typescript&format=rss"
 
 # Case sensitive search
-curl "http://localhost:5173/feed?url=https://hnrss.org/newest&include=TypeScript&case_sensitive=true"
+curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=TypeScript&case_sensitive=true"
 ```
 
 ## Testing

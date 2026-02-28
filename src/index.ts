@@ -15,7 +15,7 @@ app.get('/', (c) => {
 
 app.route('/feed', feedRoute);
 
-const port = parseInt(process.env.PORT || '5173');
+const port = parseInt(process.env.PORT || '3015');
 
 console.log(`Server running on http://localhost:${port}`);
 
