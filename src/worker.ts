@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { feedRoute } from './routes/feed.js';
+import { feedRoute } from './routes/feed';
 
 const app = new Hono();
 

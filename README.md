@@ -69,5 +69,5 @@ pnpm build && pnpm start
 
 - **Runtime:** Node.js
 - **Framework:** Hono (TypeScript-first)
-- **RSS Parsing:** feedsmith (RSS 2.0, Atom, JSON Feed)
+- **RSS Parsing/Generating:** feedsmith (RSS 2.0, Atom, JSON Feed)
 - **Testing:** Vitest
