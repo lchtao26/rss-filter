@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSS Filter URL Builder</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    input[type="text"],
+    input[type="url"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #0066cc;
+      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+    }
+
+    .checkbox-group,
+    .radio-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-item,
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .section {
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .output-section {
+      position: sticky;
+      top: 16px;
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .output-label {
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .output-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .output-url {
+      flex: 1;
+      padding: 10px 12px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      font-size: 0.85rem;
+      word-break: break-all;
+      min-height: 42px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: #0066cc;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0052a3;
+    }
+
+    .btn-primary:active {
+      background: #004080;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+    }
+
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background-color: #0066cc;
+    }
+
+    .toggle input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    .toggle-label {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .error-text {
+      color: #dc3545;
+      font-size: 0.85rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .error-text.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>RSS Filter URL Builder</h1>
+  <p class="subtitle">Build your filtered RSS feed URL</p>
+
+  <div class="section">
+    <div class="section-title">API Configuration</div>
+    <div class="form-group">
+      <label for="baseUrl">Base URL</label>
+      <input type="text" id="baseUrl" value="http://localhost:5173" placeholder="https://your-api.workers.dev">
+      <p class="hint">Your deployed API root URL</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Feed</div>
+    <div class="form-group">
+      <label for="url">Feed URL *</label>
+      <input type="url" id="url" placeholder="https://example.com/feed.xml" required>
+      <p class="error-text" id="urlError">Please enter a valid URL</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Filters</div>
+    <div class="form-group">
+      <label for="include">Include Keywords</label>
+      <input type="text" id="include" placeholder="keyword1, keyword2">
+      <p class="hint">Comma-separated. Items matching ANY of these will be included.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="exclude">Exclude Keywords</label>
+      <input type="text" id="exclude" placeholder="keyword1, keyword2">
+      <p class="hint">Comma-separated. Items matching ANY of these will be excluded.</p>
+    </div>
+
+    <div class="form-group">
+      <label>Match Mode</label>
+      <div class="radio-group">
+        <label class="radio-item">
+          <input type="radio" name="match" value="any" checked>
+          <span>Any</span>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="match" value="all">
+          <span>All</span>
+        </label>
+      </div>
+      <p class="hint">Match "any" or "all" include keywords</p>
+    </div>
+
+    <div class="form-group">
+      <label>Search Fields</label>
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="fields" value="title" checked>
+          <span>Title</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="fields" value="description" checked>
+          <span>Description</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="fields" value="content" checked>
+          <span>Content</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="toggle-group">
+        <label class="toggle">
+          <input type="checkbox" id="caseSensitive">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">Case Sensitive</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Output Format</label>
+      <div class="radio-group">
+        <label class="radio-item">
+          <input type="radio" name="format" value="json" checked>
+          <span>JSON</span>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="format" value="rss">
+          <span>RSS</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="output-section">
+    <label class="output-label">Generated URL</label>
+    <div class="output-wrapper">
+      <div class="output-url" id="outputUrl"></div>
+      <button class="btn btn-primary" id="copyBtn">Copy</button>
+    </div>
+  </div>
+
+  <script>
+    const baseUrlInput = document.getElementById('baseUrl');
+    const urlInput = document.getElementById('url');
+    const includeInput = document.getElementById('include');
+    const excludeInput = document.getElementById('exclude');
+    const caseSensitiveInput = document.getElementById('caseSensitive');
+    const outputUrl = document.getElementById('outputUrl');
+    const copyBtn = document.getElementById('copyBtn');
+    const urlError = document.getElementById('urlError');
+
+    function buildUrl() {
+      const baseUrl = baseUrlInput.value.trim() || 'http://localhost:5173';
+      const url = urlInput.value.trim();
+
+      // URL is required - don't build if empty
+      if (!url) {
+        outputUrl.textContent = 'Enter a feed URL to generate the filtered URL';
+        urlError.classList.remove('visible');
+        return;
+      }
+
+      // Validate URL format
+      try {
+        new URL(url);
+        urlError.classList.remove('visible');
+      } catch (e) {
+        urlError.classList.add('visible');
+        outputUrl.textContent = 'Please enter a valid URL';
+        return;
+      }
+
+      const params = new URLSearchParams();
+
+      // Add URL (required)
+      params.set('url', url);
+
+      // Include keywords
+      const include = includeInput.value.trim();
+      if (include) {
+        params.set('include', include);
+      }
+
+      // Exclude keywords
+      const exclude = excludeInput.value.trim();
+      if (exclude) {
+        params.set('exclude', exclude);
+      }
+
+      // Match mode (default: any)
+      const match = document.querySelector('input[name="match"]:checked').value;
+      if (match !== 'any') {
+        params.set('match', match);
+      }
+
+      // Fields (default: title,description,content - all checked)
+      const fields = Array.from(document.querySelectorAll('input[name="fields"]:checked'))
+        .map(cb => cb.value);
+
+      // Only add fields if not all three are checked
+      const allFields = ['title', 'description', 'content'];
+      const allChecked = allFields.every(f => fields.includes(f));
+      if (!allChecked) {
+        params.set('fields', fields.join(','));
+      }
+
+      // Case sensitive (default: false)
+      if (caseSensitiveInput.checked) {
+        params.set('case_sensitive', 'true');
+      }
+
+      // Format (default: json)
+      const format = document.querySelector('input[name="format"]:checked').value;
+      if (format !== 'json') {
+        params.set('format', format);
+      }
+
+      // Build final URL
+      const feedUrl = `${baseUrl.replace(/\/$/, '')}/feed?${params.toString()}`;
+      outputUrl.textContent = feedUrl;
+    }
+
+    // Add event listeners to all inputs
+    const inputs = [
+      baseUrlInput, urlInput, includeInput, excludeInput, caseSensitiveInput
+    ];
+
+    inputs.forEach(input => {
+      input.addEventListener('input', buildUrl);
+    });
+
+    // Radio buttons and checkboxes
+    document.querySelectorAll('input[name="match"], input[name="format"]').forEach(el => {
+      el.addEventListener('change', buildUrl);
+    });
+
+    document.querySelectorAll('input[name="fields"]').forEach(el => {
+      el.addEventListener('change', buildUrl);
+    });
+
+    // Copy button
+    copyBtn.addEventListener('click', async () => {
+      const text = outputUrl.textContent;
+      if (!text || text.includes('Enter a feed URL') || text.includes('valid URL')) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.remove('btn-primary');
+        copyBtn.classList.add('btn-success');
+
+        setTimeout(() => {
+          copyBtn.textContent = originalText;
+          copyBtn.classList.remove('btn-success');
+          copyBtn.classList.add('btn-primary');
+        }, 1500);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    });
+
+    // Initial build
+    buildUrl();
+  </script>
+</body>
+</html>
