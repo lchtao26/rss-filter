@@ -14,7 +14,7 @@ vi.mock('../services/filter', () => ({
 }));
 
 const mockFeedsmithResponse = {
-  format: 'rss' as const,
+  type: 'rss' as const,
   feed: {
     title: 'Test Feed',
     items: [
@@ -36,7 +36,7 @@ describe('feedRoute', () => {
     const res = await app.request('/feed?url=http://example.com/rss&format=json&include=test');
 
     expect(res.status).toBe(200);
-    const data = await res.json();
+    const data = await res.json() as { feed?: unknown };
     expect(data.feed).toBeDefined();
     expect(fetchFeed).toHaveBeenCalledWith('http://example.com/rss');
   });
@@ -75,7 +75,7 @@ describe('feedRoute', () => {
     const res = await app.request('/feed?include=test');
 
     expect(res.status).toBe(400);
-    const data = await res.json();
+    const data = await res.json() as { error?: string };
     expect(data.error).toContain('url');
   });
 
@@ -98,7 +98,7 @@ describe('feedRoute', () => {
     const res = await app.request('/feed?url=not-a-url');
 
     expect(res.status).toBe(400);
-    const data = await res.json();
+    const data = await res.json() as { error?: string };
     expect(data.error).toContain('Invalid URL');
   });
 });

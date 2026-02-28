@@ -96,19 +96,3 @@ curl "http://localhost:3015/feed?url=https://hnrss.org/newest&include=TypeScript
 pnpm test
 ```
 
-## Project Structure
-
-```
-rss-filter/
-├── src/
-│   ├── index.ts           # Entry point + server bootstrap
-│   ├── routes/
-│   │   └── feed.ts        # GET /feed route
-│   ├── services/
-│   │   ├── fetcher.ts    # Fetch + parse remote RSS feed
-│   │   └── filter.ts     # Keyword filtering logic
-│   └── types.ts          # Shared types/interfaces
-├── package.json
-├── tsconfig.json
-└── README.md
-```

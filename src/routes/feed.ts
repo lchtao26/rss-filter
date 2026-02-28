@@ -114,7 +114,7 @@ export const feedRoute = new Hono().get('/', async (c) => {
   }
 
   // Fetch and parse the feed
-  const { feed } = await fetchFeed(url);
+  const feedResult = await fetchFeed(url);
 
   // Apply filters
   const filterOptions: FilterOptions = {
@@ -125,15 +125,17 @@ export const feedRoute = new Hono().get('/', async (c) => {
     case_sensitive,
   };
 
-  const filteredItems = filterFeedItems(feed.items ?? [], filterOptions);
+  // Atom feeds use 'entries'; all other formats use 'items'
+  const rawItems = feedResult.type === 'atom' ? [] : (feedResult.feed.items ?? []);
+  const filteredItems = filterFeedItems(rawItems, filterOptions);
 
   // Return response based on format
   if (format === 'json') {
-    return c.json({ feed: { ...feed, items: filteredItems } });
+    return c.json({ feed: { ...feedResult.feed, items: filteredItems } });
   }
 
   // RSS XML format - use custom generator to preserve original feed metadata
-  const rss = generateRss({ ...feed, items: filteredItems });
+  const rss = generateRss({ ...feedResult.feed, items: filteredItems });
   return c.text(rss, 200, {
     'Content-Type': 'application/rss+xml; charset=utf-8',
   });
