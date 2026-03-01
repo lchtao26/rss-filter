@@ -152,20 +152,13 @@ export const feedRoute = new Hono().get(
       feedData[itemsKey] = filteredItems;
 
       try {
-        let textResult = '';
-        let contentType = 'application/xml';
-
         if (originalFormat === FEED_FORMATS.ATOM) {
-          textResult = generateAtomFeed(feedData);
-          contentType = 'application/atom+xml';
-        } else if (originalFormat === FEED_FORMATS.JSON) {
-          textResult = generateJsonFeed(feedData) as string;
-          contentType = 'application/feed+json';
-        } else {
-          textResult = generateRssFeed(feedData);
-          contentType = 'application/rss+xml';
+          return c.text(generateAtomFeed(feedData), 200, { 'Content-Type': 'application/atom+xml' });
         }
-        return c.text(textResult, 200, { 'Content-Type': contentType });
+        if (originalFormat === FEED_FORMATS.JSON) {
+          return c.text(generateJsonFeed(feedData) as string, 200, { 'Content-Type': 'application/feed+json' });
+        }
+        return c.text(generateRssFeed(feedData), 200, { 'Content-Type': 'application/rss+xml' });
       } catch (e) {
         return c.text('Error generating feed: ' + (e as Error).message, 500);
       }
