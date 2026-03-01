@@ -49,7 +49,7 @@ curl "https://rss-filter.lichcode.workers.dev/feed?url=https://hnrss.org/newest&
 pnpm wrangler deploy
 ```
 
-Your API will be available at `https://rss-filter.<your-account>.workers.dev/feed`. Live instance: https://rss-filter.lichcode.workers.dev/feed
+Your API will be available at `https://rss-filter.<your-account>.workers.dev/feed`. 
 
 The Worker is configured in `wrangler.toml` with entry point `src/worker.ts`.
 
