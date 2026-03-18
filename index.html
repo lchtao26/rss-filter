@@ -109,6 +109,23 @@
       letter-spacing: 0.5px;
       color: #666;
       margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .btn-secondary:active {
+      background: #d0d0d0;
     }
 
     .output-section {
@@ -251,7 +268,7 @@
 
 
   <div class="section">
-    <div class="section-title">Feed</div>
+    <div class="section-title">Feed <button type="button" class="btn btn-secondary" id="parseBtn">Parse Generated URL</button></div>
     <div class="form-group">
       <label for="url">Feed URL *</label>
       <input type="url" id="url" placeholder="https://example.com/feed.xml" required>
@@ -333,6 +350,56 @@
     const outputUrl = document.getElementById('outputUrl');
     const copyBtn = document.getElementById('copyBtn');
     const urlError = document.getElementById('urlError');
+    const parseBtn = document.getElementById('parseBtn');
+
+    function parseAndFill(urlString) {
+      try {
+        const u = new URL(urlString.trim());
+        const params = u.searchParams;
+
+        // If no query params, treat the pasted URL as the feed URL itself
+        if (!params.toString()) {
+          urlInput.value = u.href;
+          buildUrl();
+          return;
+        }
+
+        const feedUrl = params.get('url');
+        if (feedUrl) urlInput.value = feedUrl;
+
+        const includeAny = params.get('include_any');
+        if (includeAny !== null) includeAnyInput.value = includeAny;
+
+        const includeAll = params.get('include_all');
+        if (includeAll !== null) includeAllInput.value = includeAll;
+
+        const excludeAny = params.get('exclude_any');
+        if (excludeAny !== null) excludeAnyInput.value = excludeAny;
+
+        const excludeAll = params.get('exclude_all');
+        if (excludeAll !== null) excludeAllInput.value = excludeAll;
+
+        const fields = params.get('fields');
+        if (fields) {
+          const fieldList = fields.split(',').map(s => s.trim()).filter(Boolean);
+          document.querySelectorAll('input[name="fields"]').forEach(cb => {
+            cb.checked = fieldList.includes(cb.value);
+          });
+        }
+
+        const caseSensitive = params.get('case_sensitive');
+        if (caseSensitive !== null) caseSensitiveInput.checked = caseSensitive === 'true';
+
+        buildUrl();
+      } catch (e) {
+        alert('Invalid URL. Please paste a valid RSS filter URL.');
+      }
+    }
+
+    parseBtn.addEventListener('click', () => {
+      const pasted = prompt('Paste the RSS filter URL to parse:');
+      if (pasted) parseAndFill(pasted);
+    });
 
     function buildUrl() {
       const baseUrl = 'https://rss-filter.lichcode.workers.dev/';
