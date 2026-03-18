@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { parseFeed, generateRssFeed, generateAtomFeed, generateJsonFeed } from 'feedsmith';
+import { parseFeed, generateRssFeed } from 'feedsmith';
 
 // Constants
 const FEED_FIELDS = {
@@ -148,17 +148,15 @@ export const feedRoute = new Hono().get(
 
       const filteredItems = items.filter(filterItems);
 
-      // Set filtered items back to appropriate key
+      // Set filtered items back and normalize for RSS output
       feedData[itemsKey] = filteredItems;
+      if (originalFormat === FEED_FORMATS.ATOM) {
+        feedData.items = feedData.entries;
+        delete feedData.entries;
+      }
 
       try {
-        if (originalFormat === FEED_FORMATS.ATOM) {
-          return c.text(generateAtomFeed(feedData), 200, { 'Content-Type': 'application/atom+xml' });
-        }
-        if (originalFormat === FEED_FORMATS.JSON) {
-          return c.text(generateJsonFeed(feedData) as string, 200, { 'Content-Type': 'application/feed+json' });
-        }
-        return c.text(generateRssFeed(feedData), 200, { 'Content-Type': 'application/rss+xml' });
+        return c.text(generateRssFeed(feedData), 200, { 'Content-Type': 'application/xml' });
       } catch (e) {
         return c.text('Error generating feed: ' + (e as Error).message, 500);
       }
